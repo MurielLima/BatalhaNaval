@@ -107,10 +107,10 @@ void mostra(int saida)
 }
 int verificarTab(int tam,int* a,int* b){
 	int i,j;
-	a=(rand() % TAB) - 1;
-	b=(rand() % TAB-tam) - 1;
+	*a=(rand() % TAB) - 1;
+	*b=(rand() % TAB-tam) - 1;
 	for(i=*a;i<=*a;i++)
-		for(j=*b;j<b+tam;j++)
+		for(j=*b;j<*b+tam;j++)
 			if(tabuleiro[i][j]!=' ') return verificarTab(tam,a,b);
 	return 1;
 }
