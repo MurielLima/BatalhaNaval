@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <termios.h>
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/time.h>
@@ -12,8 +13,8 @@
 char tabuleiro[TAB][TAB];
 int ultimapos = 0;
 int buf[BUF];
-char alfabeto[14] = {'A','B','C','D','E','F','G','H','I','J','K','L','M','N'};
-srand((unsigned)time(NULL));
+char alfabeto[15] = {'A','B','C','D','E','F','G','H','I','J','K','L','M','N','\0'};
+
 void insereBuffer(char let, int kbd)
 {
   if (ultimapos == BUF)
@@ -106,10 +107,10 @@ void mostra(int saida)
 }
 int verificarTab(int tam,int* a,int* b){
 	int i,j;
-	*a=(rand() % TAB) - 1;
-	*b=(rand() % TAB-tam) - 1;
+	a=(rand() % TAB) - 1;
+	b=(rand() % TAB-tam) - 1;
 	for(i=*a;i<=*a;i++)
-		for(j=*b;j<*b+tam;j++)
+		for(j=*b;j<b+tam;j++)
 			if(tabuleiro[i][j]!=' ') return verificarTab(tam,a,b);
 	return 1;
 }
@@ -135,6 +136,7 @@ void jogo(int entrada,int saida){
 }
 int main(int argc, char **argv)
 {
+  srand(time(NULL));
   int fd, kbd;
   char letra, *portname;
   char vet[BUF];
