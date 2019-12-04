@@ -2,10 +2,10 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
-#include <termios.h>
 #include <sys/types.h>
 #include <sys/time.h>
 #include <string.h>
+#include <time.h>
 #define BUF 300
 #define TAB 14
 #define POS 10
@@ -13,6 +13,7 @@ char tabuleiro[TAB][TAB];
 int ultimapos = 0;
 int buf[BUF];
 char alfabeto[14] = {'A','B','C','D','E','F','G','H','I','J','K','L','M','N'};
+srand((unsigned)time(NULL));
 void insereBuffer(char let, int kbd)
 {
   if (ultimapos == BUF)
@@ -103,22 +104,34 @@ void mostra(int saida)
         write(saida, "\n", 1);
     }
 }
-void escreverTabuleiro(){
-
+int verificarTab(int tam,int* a,int* b){
+	int i,j;
+	*a=(rand() % TAB) - 1;
+	*b=(rand() % TAB-tam) - 1;
+	for(i=*a;i<=*a;i++)
+		for(j=*b;j<*b+tam;j++)
+			if(tabuleiro[i][j]!=' ') return verificarTab(tam,a,b);
+	return 1;
 }
-void inserirTabuleiro(char posicao[]){
-
+void insere(int tam,char let){
+	int a,b,i,j;
+	verificarTab(tam,&a,&b);
+	for(i=a;i<=a;i++)
+		for(j=b;j<b+tam;j++)
+			tabuleiro[i][j]=let;
+} 
+void inserirTabuleiro(){
+	int a,b,i,j,k;
+	//inserir submarino 2
+	insere(2,'X');
+	//inserir barco 3
+	insere(3,'Y');
+	//inserir navio 4
+	insere(4,'Z');
 }
-void jogo(int entrada, int saida){
-  char pos[10];
-  mostra(saida);
-  write(saida,"\nIndique a posição do seu barco:",35);
-  sscanf(entrada,"%s",&pos);
-  inserirTabuleiro(pos);
-  write(saida,"\nIndique a posição do seu submarino:",40);
-  read(entrada,&pos,POS);
-  write(saida,"\nIndique a posição do seu navio:",35);
-  read(entrada,&pos,POS);
+void jogo(int entrada,int saida){
+	inserirTabuleiro();
+	mostra(saida);
 }
 int main(int argc, char **argv)
 {
@@ -182,26 +195,26 @@ int main(int argc, char **argv)
 
   jogo(fd,kbd);
 
-  do
-  {
-    /* Wait for any activitiy in the serial port (fd) or keyboard (kbd) */
-    FD_ZERO(&descritores); /* Inicializa a lista de handles */
-    FD_SET(fd, &descritores);
-    FD_SET(kbd, &descritores);
-    timeout.tv_sec = 5;
-    timeout.tv_usec = 0;
-    select(FD_SETSIZE, &descritores, NULL, NULL, &timeout);
-
-    while (read(fd, &vet, BUF) >= 0)
-    {                        /* Get a char from serial port "fd"*/
-      write(kbd, &vet, BUF); /* Send it to the console "kbd"*/
-    }
-    while (read(kbd, &letra, 1) >= 0)
-    { /* Get a char from "kbd" (keyboard)read(kbd,&letra,1)*/
-      write(kbd, &letra, 1); /* Send it to the console "kbd"*/
-      lerTeclado(fd, kbd, letra);
-    }
-  } while (letra != 'X' - 64); /* if the key was Ctrl-X exit*/
+//  do
+//  {
+//    /* Wait for any activitiy in the serial port (fd) or keyboard (kbd) */
+//    FD_ZERO(&descritores); /* Inicializa a lista de handles */
+//    FD_SET(fd, &descritores);
+//    FD_SET(kbd, &descritores);
+//    timeout.tv_sec = 5;
+//    timeout.tv_usec = 0;
+//    select(FD_SETSIZE, &descritores, NULL, NULL, &timeout);
+//
+//    while (read(fd, &vet, BUF) >= 0)
+//    {                        /* Get a char from serial port "fd"*/
+//      write(kbd, &vet, BUF); /* Send it to the console "kbd"*/
+//    }
+//    while (read(kbd, &letra, 1) >= 0)
+//    { /* Get a char from "kbd" (keyboard)read(kbd,&letra,1)*/
+//      write(kbd, &letra, 1); /* Send it to the console "kbd"*/
+//      lerTeclado(fd, kbd, letra);
+//    }
+//  } while (letra != 'X' - 64); /* if the key was Ctrl-X exit*/
   close(fd);
   /* Set console back to normal */
   fcntl(kbd, 0, FNDELAY);
