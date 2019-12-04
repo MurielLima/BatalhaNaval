@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <fcntl.h>
 #include <termios.h>
+#include <fcntl.h>
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/time.h>
@@ -130,6 +130,14 @@ void inserirTabuleiro(){
 	insere(3,'Y');
 	//inserir navio 4
 	insere(4,'Z');
+}
+void receberTiro(char pos[10]){
+	int a,b;
+	a = deParaLetra(pos[0]);
+	b = pos[1];
+	if(tabuleiro[a][b]!=' ')
+		return 1;
+	return -1;
 }
 void jogo(int entrada,int saida){
 	inserirTabuleiro();
