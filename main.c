@@ -34,7 +34,7 @@ void mostra(char **mat,int n,int m)
     {
         for(j=0;j<m;j++)
         {
-            printf("%5c ",mat[i][j]);
+            printf("|%c|",mat[i][j]);
         }
         printf("\n");
     }
@@ -59,25 +59,17 @@ int deParaBarco(char tipo)
 int preencheMatriz(char **mat,int posX, int posY, char elem,int orient)
 {
     int i,j,barco,tamX,tamY;
-    if(orient == 1)
-    {
-        tamX = (posX+barco)*orient;// Vertical
-        tamY = (posY+barco)*0;// Horizontal
-    }else
-    {
-        tamX = (posX+barco)*0;// Vertical
-        tamY = (posY+barco)*orient;// Horizontal
-    }    
     barco = deParaBarco(elem);
-    printf("%d",barco);
-    for(i=posX;i<=tamX;i++)
-        for(j=posY;j<=tamY;j++)
-            if(mat[i][j] != ' ')
-                printf("%dtete",barco);
-
-    for(i=posX;i<=tamX;i++)
-        for(j=posY;j<=tamY;j++)
-            mat[i][j] = elem;
+   printf("X :%d Y: %d\n\n",posX,posY);
+	mat[posX][posY] = elem;
+	
+	if(orient==1){
+		for(i=barco-1;i>0;i--)
+	mat[posX][posY+i] = elem;}
+else{
+	for(i=barco-1;i>0;i--)
+	mat[posX+i][posY] = elem;
+}
 
     return 0 ;
 }
@@ -110,20 +102,46 @@ int deParaLetra(char letra){
 return pos;
 }
 
+int hit (char **mat,int posX, int posY){
+	int pont=0;
+	switch(mat[posX][posY]){
+        case 'X':
+	    case 'Z':
+        case 'Y':mat[posX][posY]='@';pont=1;break;
+        case ' ':mat[posX][posY]='#';break;
+	}
+	return pont;
+}
+
 int main(int argsc,char *argsv[]){
  char** mat;
  char letra,numero;
+ int posY,posX, pontuacao=0;
  mat = criamatriz(N,M);
  inicializa(mat,N,M);
 mostra(mat,N,M);
 printf("\n\npreencha com o primeiro submarino\n");
-scanf("%c%c",&letra,&numero);
-printf("%deee",numero);
-preencheMatriz(mat,deParaLetra(letra),numero,'X',0);
+scanf("%d %d",&posX,&posY);
+preencheMatriz(mat,posX,posY,'X',1);
 mostra(mat,N,M);
+while (pontuacao<2){
+	printf("\nPontuacao: %d",pontuacao);
+	printf("\n\nPosicao para Tiro\n");
+	scanf("%d %d",&posX,&posY);
+	if (posX>10||posX<0||posY>10||posY<0){
+	printf("\n\nPosicao Invalida\n");
+	}
+	else
+	{
+	pontuacao=pontuacao+hit(mat,posX,posY);
+	mostra(mat,N,M);
+	}
+}
+printf("\n\nGanhou!!!\n\n");
 getchar();
  return 0;    
 }
+
 
 
 
